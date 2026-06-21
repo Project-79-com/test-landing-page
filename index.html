@@ -159,6 +159,51 @@
       );
     }
 
+    /* Dynamic & Slight Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes heroDrift {
+      0% { transform: scale(1.0) translate(0, 0); }
+      100% { transform: scale(1.04) translate(1%, -1%); }
+    }
+
+    @keyframes subtlePulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes lightningFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-bg {
+      animation: heroDrift 28s ease-in-out infinite alternate;
+      transform-origin: center;
+    }
+
+    .lightning-lines {
+      animation: lightningFlow 18s linear infinite;
+    }
+
+    .premium-card {
+      transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
     .data-row {
       transition: all 0.2s ease;
     }
@@ -266,23 +311,26 @@
     <!-- Strong overlay for text clarity while preserving the image -->
     <div class="absolute inset-0 hero-text-overlay"></div>
 
+    <!-- Subtle dynamic light layer for dynamism -->
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 40% 60%, rgba(103,232,249,0.06) 0%, transparent 55%); animation: subtlePulse 9s ease-in-out infinite;"></div>
+
     <!-- Centered content - clear company identity -->
     <div class="relative z-10 w-full max-w-5xl mx-auto px-8 text-center">
       <div class="max-w-[780px] mx-auto">
 
-        <div class="mb-4">
+        <div class="mb-4 reveal" style="animation-delay: 120ms">
           <span class="text-sm tracking-[4px] font-semibold text-[#67e8f9]">EDGENTIC</span>
         </div>
 
-        <h1 class="heading-xl font-display tracking-[-0.065em] leading-[0.9] mb-5">
+        <h1 class="heading-xl font-display tracking-[-0.065em] leading-[0.9] mb-5 reveal" style="animation-delay: 220ms">
           The Vertical AI Platform<br>for the Bidirectional Grid
         </h1>
 
-        <p class="mx-auto max-w-md text-[21px] text-zinc-200 tracking-tight mb-9">
+        <p class="mx-auto max-w-md text-[21px] text-zinc-200 tracking-tight mb-9 reveal" style="animation-delay: 320ms">
           Where enterprise billing meets edge-device data to power the $4T retail electricity transformation.
         </p>
 
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="animation-delay: 420ms">
           <a href="#contact" 
              class="group inline-flex items-center justify-center px-10 h-[56px] text-[15px] font-semibold rounded-full sleek-btn sleek-btn-primary">
             Request a demo
@@ -294,7 +342,7 @@
           </a>
         </div>
 
-        <div class="mt-10 text-xs text-zinc-500 flex items-center justify-center gap-x-3">
+        <div class="mt-10 text-xs text-zinc-500 flex items-center justify-center gap-x-3 reveal" style="animation-delay: 520ms">
           <span class="inline-flex items-center gap-x-1.5">
             <i class="fa-solid fa-check text-[#67e8f9]"></i> 1 Full Utility Contract
           </span>
@@ -309,7 +357,7 @@
   <!-- MARKET SNAPSHOT -->
   <div class="border-y border-zinc-900 py-8 bg-zinc-950">
     <div class="max-w-6xl mx-auto px-8">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-8 reveal">
         <div>
           <div class="text-[42px] font-semibold tracking-tighter stat-number text-[#67e8f9]">$4T</div>
           <div class="text-sm text-zinc-500 mt-0.5">Global electricity retail market</div>
@@ -341,7 +389,7 @@
     </div>
 
     <div class="relative mt-10 grid md:grid-cols-2 gap-6">
-      <div class="premium-card rounded-3xl p-9">
+      <div class="premium-card rounded-3xl p-9 reveal">
         <div class="uppercase text-xs tracking-[1.5px] font-semibold text-zinc-500 mb-4">Utilities &amp; Retail Energy Providers</div>
         
         <div class="space-y-6 text-[15px]">
@@ -362,7 +410,7 @@
         </div>
       </div>
 
-      <div class="premium-card rounded-3xl p-9">
+      <div class="premium-card rounded-3xl p-9 reveal" style="animation-delay: 120ms">
         <div class="uppercase text-xs tracking-[1.5px] font-semibold text-zinc-500 mb-4">EV Fleet Payment Companies</div>
         
         <p class="value-prop mb-6">Fleet-payment companies like WEX and Corpay need to reimburse employees for charging company EVs at home. The electricity used may come from the grid, rooftop solar, a home battery, or a mix of all three. The cost also changes by tariff, time of use, location, and driver behavior.</p>
@@ -392,7 +440,7 @@
     </div>
 
     <div class="grid md:grid-cols-3 gap-5">
-      <div class="premium-card rounded-3xl px-8 py-8">
+      <div class="premium-card rounded-3xl px-8 py-8 reveal">
         <div class="w-10 h-10 rounded-2xl bg-zinc-900 flex items-center justify-center mb-6">
           <i class="fa-solid fa-bolt text-lg text-[#67e8f9]"></i>
         </div>
@@ -400,7 +448,7 @@
         <p class="text-[15px] body-text">Handles prosumers with EV tariffs, solar buyback, net metering, and storage credits.</p>
       </div>
       
-      <div class="premium-card rounded-3xl px-8 py-8">
+      <div class="premium-card rounded-3xl px-8 py-8 reveal" style="animation-delay: 80ms">
         <div class="w-10 h-10 rounded-2xl bg-zinc-900 flex items-center justify-center mb-6">
           <i class="fa-solid fa-brain text-lg text-[#67e8f9]"></i>
         </div>
@@ -408,7 +456,7 @@
         <p class="text-[15px] body-text">Automates reconciliation, collections, compliance, and customer service with artificial intelligence.</p>
       </div>
       
-      <div class="premium-card rounded-3xl px-8 py-8">
+      <div class="premium-card rounded-3xl px-8 py-8 reveal" style="animation-delay: 160ms">
         <div class="w-10 h-10 rounded-2xl bg-zinc-900 flex items-center justify-center mb-6">
           <i class="fa-solid fa-link text-lg text-[#67e8f9]"></i>
         </div>
@@ -430,7 +478,7 @@
 
     <div class="relative grid md:grid-cols-2 lg:grid-cols-3 gap-5">
       <!-- Billing -->
-      <div class="premium-card rounded-3xl p-8">
+      <div class="premium-card rounded-3xl p-8 reveal">
         <div class="flex items-center gap-3 mb-6">
           <i class="fa-solid fa-file-invoice-dollar text-xl text-zinc-400"></i>
           <div class="font-semibold tracking-tight text-lg">Billing Reconciliation Engine</div>
@@ -444,7 +492,7 @@
       </div>
 
       <!-- Explainability -->
-      <div class="premium-card rounded-3xl p-8">
+      <div class="premium-card rounded-3xl p-8 reveal" style="animation-delay: 60ms">
         <div class="flex items-center gap-3 mb-6">
           <i class="fa-solid fa-eye text-xl text-zinc-400"></i>
           <div class="font-semibold tracking-tight text-lg">Explainable Billing &amp; Transparency</div>
@@ -487,7 +535,7 @@
       </div>
 
       <!-- AI -->
-      <div class="premium-card rounded-3xl p-8">
+      <div class="premium-card rounded-3xl p-8 reveal" style="animation-delay: 120ms">
         <div class="flex items-center gap-3 mb-6">
           <i class="fa-solid fa-robot text-xl text-zinc-400"></i>
           <div class="font-semibold tracking-tight text-lg">AI-Native Capabilities</div>
@@ -945,7 +993,94 @@
 
     // Subtle hero animation hint
     function initHero() {
-      // Already elegant in pure CSS, nothing heavy required
+      const hero = document.querySelector('.hero-bg');
+      if (!hero) return;
+
+      // Very slight mouse parallax for dynamism (premium feel)
+      let raf = null;
+      document.addEventListener('mousemove', (e) => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const rect = hero.parentElement.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8;
+          const y = ((e.clientY - rect.top) / rect.height - 0.5) * 5;
+          hero.style.transform = `scale(1.04) translate(${x}px, ${y}px)`;
+        });
+      });
+
+      // Reset on mouse leave
+      document.querySelector('.hero-bg')?.parentElement?.addEventListener('mouseleave', () => {
+        if (hero) hero.style.transform = '';
+      });
+    }
+
+    // Scroll-triggered reveal animations (slight & elegant)
+    function initScrollAnimations() {
+      const reveals = document.querySelectorAll('.reveal');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            // Stagger children if needed
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.15,
+        rootMargin: "0px 0px -40px 0px"
+      });
+
+      reveals.forEach(el => observer.observe(el));
+    }
+
+    // Gentle count-up animation for stats
+    function animateValue(el, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        el.textContent = value.toLocaleString() + (el.dataset.suffix || '');
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          el.textContent = end.toLocaleString() + (el.dataset.suffix || '');
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    function initStatCounters() {
+      const stats = document.querySelectorAll('.stat-number');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const text = el.textContent.trim();
+            
+            // Handle different formats
+            if (text.includes('$') || text.includes('K') || text.includes('%')) {
+              // Skip or handle formatted ones simply
+              el.style.transition = 'transform 0.6s ease, opacity 0.6s ease';
+              el.style.transform = 'scale(1.02)';
+              setTimeout(() => {
+                el.style.transform = 'scale(1)';
+              }, 600);
+            } else {
+              const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+              if (!isNaN(num)) {
+                el.textContent = '0';
+                animateValue(el, 0, num, 1400);
+              }
+            }
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.6 });
+
+      stats.forEach(stat => observer.observe(stat));
     }
 
     // Boot
@@ -954,9 +1089,11 @@
       initSmoothScroll();
       initKeyboard();
       initHero();
+      initScrollAnimations();
+      initStatCounters();
       
       // Optional: close modal when clicking backdrop already handled
-      console.log('%c[Edgentic] Premium landing ready.', 'color:#3f3f46');
+      console.log('%c[Edgentic] Premium landing ready. (dynamic + subtle animations)', 'color:#3f3f46');
     }
 
     window.onload = init;
