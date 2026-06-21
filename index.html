@@ -338,15 +338,15 @@
     <div class="relative z-10 w-full max-w-5xl mx-auto px-8 text-center">
       <div class="max-w-[780px] mx-auto">
 
-        <div class="mb-4 reveal" style="animation-delay: 120ms">
+        <div class="mb-4">
           <span class="text-sm tracking-[4px] font-semibold text-[#67e8f9]">EDGENTIC</span>
         </div>
 
-        <h1 class="heading-xl font-display tracking-[-0.065em] leading-[0.9] mb-5 reveal" style="animation-delay: 220ms">
+        <h1 class="heading-xl font-display tracking-[-0.065em] leading-[0.9] mb-5">
           The Vertical AI Platform<br>for the Bidirectional Grid
         </h1>
 
-        <p class="mx-auto max-w-md text-[21px] text-zinc-200 tracking-tight mb-9 reveal" style="animation-delay: 320ms">
+        <p class="mx-auto max-w-md text-[21px] text-zinc-200 tracking-tight mb-9">
           Where enterprise billing meets edge-device data to power the $4T retail electricity transformation.
         </p>
 
@@ -1029,7 +1029,15 @@
         rootMargin: "0px 0px -40px 0px"
       });
 
-      reveals.forEach(el => observer.observe(el));
+      reveals.forEach(el => {
+        observer.observe(el);
+        // Immediately reveal if already in viewport (e.g. hero) to avoid load delay
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('visible');
+          observer.unobserve(el);
+        }
+      });
     }
 
     // Control subtle background videos with different playback rates
@@ -1106,7 +1114,8 @@
       console.log('%c[Edgentic] Premium landing ready. (dynamic + subtle animations)', 'color:#3f3f46');
     }
 
-    window.onload = init;
+    // Run immediately (script is at end of body)
+    init();
   </script>
 </body>
 </html>
