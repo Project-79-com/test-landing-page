@@ -125,7 +125,7 @@
     }
 
     .hero-bg {
-      background-image: url('edgentic-hero-bg.jpg');
+      /* Used as poster fallback for video */
       background-size: cover;
       background-position: center 40%;
       background-repeat: no-repeat;
@@ -159,15 +159,14 @@
       );
     }
 
+    video {
+      filter: contrast(1.03) brightness(0.98);
+    }
+
     /* Dynamic & Slight Animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(24px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes heroDrift {
-      0% { transform: scale(1.0) translate(0, 0); }
-      100% { transform: scale(1.04) translate(1%, -1%); }
     }
 
     @keyframes subtlePulse {
@@ -192,8 +191,7 @@
     }
 
     .hero-bg {
-      animation: heroDrift 28s ease-in-out infinite alternate;
-      transform-origin: center;
+      /* Video now handles subtle animation internally */
     }
 
     .lightning-lines {
@@ -303,12 +301,21 @@
     </div>
   </nav>
 
-  <!-- HERO: Full-screen clean & amazing abstract background (wow through elegance & scale) -->
+  <!-- HERO: Full-screen video background with subtle animation -->
   <div class="relative overflow-hidden min-h-screen flex items-center border-b border-zinc-900">
-    <!-- Full screen background image -->
-    <div class="absolute inset-0 hero-bg"></div>
+    <!-- Full screen subtle animated video -->
+    <video 
+      class="absolute inset-0 w-full h-full object-cover"
+      autoplay 
+      loop 
+      muted 
+      playsinline
+      preload="auto"
+      poster="edgentic-hero-bg.jpg">
+      <source src="edgentic-hero.mp4" type="video/mp4">
+    </video>
 
-    <!-- Strong overlay for text clarity while preserving the image -->
+    <!-- Strong overlay for text clarity while preserving the video -->
     <div class="absolute inset-0 hero-text-overlay"></div>
 
     <!-- Subtle dynamic light layer for dynamism -->
@@ -993,24 +1000,24 @@
 
     // Subtle hero animation hint
     function initHero() {
-      const hero = document.querySelector('.hero-bg');
-      if (!hero) return;
+      const video = document.querySelector('video');
+      if (!video) return;
 
-      // Very slight mouse parallax for dynamism (premium feel)
+      // Very slight mouse parallax for dynamism (premium feel) on the video
       let raf = null;
       document.addEventListener('mousemove', (e) => {
         if (raf) cancelAnimationFrame(raf);
         raf = requestAnimationFrame(() => {
-          const rect = hero.parentElement.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8;
-          const y = ((e.clientY - rect.top) / rect.height - 0.5) * 5;
-          hero.style.transform = `scale(1.04) translate(${x}px, ${y}px)`;
+          const rect = video.parentElement.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width - 0.5) * 6;
+          const y = ((e.clientY - rect.top) / rect.height - 0.5) * 4;
+          video.style.transform = `scale(1.03) translate(${x}px, ${y}px)`;
         });
       });
 
       // Reset on mouse leave
-      document.querySelector('.hero-bg')?.parentElement?.addEventListener('mouseleave', () => {
-        if (hero) hero.style.transform = '';
+      video.parentElement?.addEventListener('mouseleave', () => {
+        if (video) video.style.transform = '';
       });
     }
 
