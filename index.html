@@ -328,6 +328,9 @@
       <source src="edgentic-hero.mp4" type="video/mp4">
     </video>
 
+    <!-- Pixelated canvas overlay for interactive ASCII/pixel effect (mouse hover controls detail) -->
+    <canvas id="hero-pixel-canvas" class="absolute inset-0 w-full h-full z-[1] pointer-events-auto" style="opacity: 0.92; mix-blend-mode: screen;"></canvas>
+
     <!-- Strong overlay for text clarity while preserving the video -->
     <div class="absolute inset-0 hero-text-overlay"></div>
 
@@ -479,6 +482,8 @@
     <video class="section-video-bg" autoplay loop muted playsinline style="opacity: 0.08;">
       <source src="edgentic-hero.mp4" type="video/mp4">
     </video>
+    <!-- Additional pixelated code animation layer for platform theme (energy grid) - behind content -->
+    <canvas id="platform-pixel-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-auto" style="opacity: 0.65; mix-blend-mode: screen;"></canvas>
     <div class="mb-10 relative">
       <div class="uppercase tracking-[2px] text-xs font-semibold text-zinc-500 mb-2">THE PLATFORM</div>
       <h2 class="heading-lg">Built for the new energy economy.</h2>
@@ -1051,6 +1056,247 @@
       });
     }
 
+    // Pixelated Canvas Video Effect (inspired by generalintuition.com style)
+    // Uses code (canvas + downsampled video) + mouse hover to control pixelation/detail level
+    // Themed with our lightning blue and energy grid aesthetic
+    function initHeroPixelCanvas() {
+      const video = document.querySelector('video');
+      const canvas = document.getElementById('hero-pixel-canvas');
+      if (!video || !canvas) return;
+
+      const ctx = canvas.getContext('2d', { alpha: true });
+      let width = 0;
+      let height = 0;
+      let cellSize = 8; // base pixelation (higher = more blocky/pixelated)
+      let targetCellSize = 8;
+      let mouseX = 0.5;
+      let mouseY = 0.5;
+      let hoverIntensity = 0;
+
+      const offCanvas = document.createElement('canvas');
+      const offCtx = offCanvas.getContext('2d');
+
+      function resize() {
+        const parent = canvas.parentElement;
+        width = parent.clientWidth;
+        height = parent.clientHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Mouse hover interaction: closer to mouse = higher detail (smaller cells)
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) / rect.width;
+        mouseY = (e.clientY - rect.top) / rect.height;
+        hoverIntensity = 1;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        hoverIntensity = 0;
+      });
+
+      function draw() {
+        if (!video || video.paused || video.ended || video.videoWidth === 0) {
+          requestAnimationFrame(draw);
+          return;
+        }
+
+        // Smoothly animate cell size based on hover (more detail on hover near mouse position)
+        const hoverFactor = hoverIntensity * 0.6;
+        targetCellSize = 9 - hoverFactor * 5.5; // from ~9 (very pixelated) to ~3.5 (more detailed)
+        cellSize += (targetCellSize - cellSize) * 0.12;
+
+        const w = Math.max(2, Math.floor(width / cellSize));
+        const h = Math.max(2, Math.floor(height / cellSize));
+
+        offCanvas.width = w;
+        offCanvas.height = h;
+
+        // Draw video downsampled (this creates the pixelation when upscaled without smoothing)
+        offCtx.drawImage(video, 0, 0, w, h);
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(offCanvas, 0, 0, w, h, 0, 0, width, height);
+
+        // Theme overlay: faint lightning blue grid + energy tint to match our aesthetic
+        ctx.strokeStyle = 'rgba(103, 232, 249, 0.12)';
+        ctx.lineWidth = 1;
+        const gridStep = cellSize * 2;
+        for (let x = gridStep; x < width; x += gridStep) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+        for (let y = gridStep; y < height; y += gridStep) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+
+        // Subtle blue vignette / energy glow near mouse for interactivity
+        if (hoverIntensity > 0.1) {
+          const mx = mouseX * width;
+          const my = mouseY * height;
+          const grad = ctx.createRadialGradient(mx, my, cellSize * 2, mx, my, cellSize * 8);
+          grad.addColorStop(0, 'rgba(103, 232, 249, 0.18)');
+          grad.addColorStop(1, 'rgba(103, 232, 249, 0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      // Start drawing loop when video is ready
+      function start() {
+        if (video.readyState >= 2) {
+          draw();
+        } else {
+          video.addEventListener('canplay', draw, { once: true });
+        }
+      }
+
+      video.addEventListener('play', start);
+      if (!video.paused) start();
+    }
+
+    // Pure code pixelated grid animation (no external video) - represents our "bidirectional grid"
+    // Pixel blocks + mouse hover lights up connections in lightning blue. Very subtle.
+    function initPlatformPixelCanvas() {
+      const canvas = document.getElementById('platform-pixel-canvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d', { alpha: true });
+      let width = 0, height = 0;
+      let cols = 32, rows = 18;
+      let cells = [];
+      let mouseX = -100, mouseY = -100;
+      let time = 0;
+
+      function resize() {
+        const parent = canvas.parentElement;
+        width = parent.clientWidth;
+        height = parent.clientHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        // Re-init grid
+        cols = Math.floor(width / 18);
+        rows = Math.floor(height / 18);
+        cells = [];
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < cols; x++) {
+            cells.push({
+              x: x,
+              y: y,
+              value: Math.random() * 0.6 + 0.2,
+              phase: Math.random() * Math.PI * 2
+            });
+          }
+        }
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        mouseX = -100;
+        mouseY = -100;
+      });
+
+      function draw() {
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.92)';
+        ctx.fillRect(0, 0, width, height);
+
+        const cellW = width / cols;
+        const cellH = height / rows;
+        const cellSize = Math.min(cellW, cellH) * 0.92;
+
+        time += 0.018;
+
+        for (let i = 0; i < cells.length; i++) {
+          const c = cells[i];
+          const px = c.x * cellW + cellW / 2;
+          const py = c.y * cellH + cellH / 2;
+
+          // Distance to mouse for hover "light up"
+          const dx = px - mouseX;
+          const dy = py - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const influence = Math.max(0, 1 - dist / 160);
+
+          // Subtle pulsing value
+          const pulse = Math.sin(time * 1.8 + c.phase) * 0.25 + 0.75;
+          let val = c.value * pulse * (0.6 + influence * 1.4);
+
+          // Pixel block
+          const size = cellSize * (0.65 + val * 0.35);
+          const alpha = 0.25 + val * 0.65;
+
+          // Lightning blue for active pixels
+          ctx.fillStyle = `rgba(103, 232, 249, ${alpha * (0.7 + influence * 0.3)})`;
+          ctx.fillRect(px - size/2, py - size/2, size, size);
+
+          // Very subtle connections to neighbors on hover
+          if (influence > 0.15) {
+            ctx.strokeStyle = `rgba(103, 232, 249, ${influence * 0.25})`;
+            ctx.lineWidth = 1;
+            // Connect to right and below occasionally
+            if (c.x < cols - 1 && Math.random() > 0.6) {
+              const nx = (c.x + 1) * cellW + cellW/2;
+              const ny = py;
+              ctx.beginPath();
+              ctx.moveTo(px, py);
+              ctx.lineTo(nx, ny);
+              ctx.stroke();
+            }
+            if (c.y < rows - 1 && Math.random() > 0.6) {
+              const nx = px;
+              const ny = (c.y + 1) * cellH + cellH/2;
+              ctx.beginPath();
+              ctx.moveTo(px, py);
+              ctx.lineTo(nx, ny);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Faint overall grid lines for energy theme
+        ctx.strokeStyle = 'rgba(103, 232, 249, 0.06)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x <= cols; x++) {
+          ctx.beginPath();
+          ctx.moveTo(x * cellW, 0);
+          ctx.lineTo(x * cellW, height);
+          ctx.stroke();
+        }
+        for (let y = 0; y <= rows; y++) {
+          ctx.beginPath();
+          ctx.moveTo(0, y * cellH);
+          ctx.lineTo(width, y * cellH);
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      // Start the animation loop
+      draw();
+    }
+
     // Gentle count-up animation for stats
     function animateValue(el, start, end, duration) {
       let startTimestamp = null;
@@ -1109,6 +1355,8 @@
       initScrollAnimations();
       initStatCounters();
       initSectionVideos();
+      initHeroPixelCanvas();
+      initPlatformPixelCanvas();
       
       // Optional: close modal when clicking backdrop already handled
       console.log('%c[Edgentic] Premium landing ready. (dynamic + subtle animations)', 'color:#3f3f46');
